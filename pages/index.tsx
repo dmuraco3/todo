@@ -13,6 +13,30 @@ const Home : NextPage = () => {
 
   const [filter, setFilter] = useState('all')
 
+  const taskMap = (val: {name: string, status: string}, index: number) => {
+    return (
+      <div key={`${val.name} ${index}`} className="border-b py-8 flex items-center pr-4">
+        <Checkbox checked={val.status === 'completed'} onChange={(e) => {
+          setTasks([
+            ...tasks.slice(0,index),
+            {...val, status: val.status === "active" ? "completed" : "active"},
+            ...tasks.slice(index+1),
+          ])
+        }}/>
+        <span>{val.name}</span>
+
+        <button className="float-right justify-self-end ml-auto" onClick={() => {
+          setTasks([
+            ...tasks.slice(0,index),
+            ...tasks.slice(index+1),
+          ])
+        }}><HighlightOffIcon /></button>
+
+
+      </div>
+    ) 
+  }
+
   return (
     <div className="h-screen flex justify-center py-[10%]">
       <div className="w-[30%]">
@@ -29,48 +53,8 @@ const Home : NextPage = () => {
 
             <input className="border-b-2 focus:outline-none w-full" placeholder="New task name..." type="text" value={newTaskName} onChange={(e) => {setNewTaskName(e.target.value)}}></input>
           </form>
-          {filter === 'all' ? tasks.map((val, index) => (
-            <div key={`${val.name} ${index}`} className="border-b py-8 flex items-center pr-4">
-              <Checkbox checked={val.status === 'completed'} onChange={(e) => {
-                setTasks([
-                  ...tasks.slice(0,index),
-                  {...val, status: val.status === "active" ? "completed" : "active"},
-                  ...tasks.slice(index+1),
-                ])
-              }}/>
-              <span>{val.name}</span>
+          {filter === 'all' ? tasks.map(taskMap) : tasks.filter((val) => val.status === filter).map(taskMap)}
 
-              <button className="float-right justify-self-end ml-auto" onClick={() => {
-                setTasks([
-                  ...tasks.slice(0,index),
-                  ...tasks.slice(index+1),
-                ])
-              }}><HighlightOffIcon /></button>
-
-
-            </div>
-          )) : tasks.filter((val) => val.status === filter).map((val, index) => (
-            <div key={`${val.name} ${index}`} className="border-b py-8 flex items-center pr-4">
-              <Checkbox checked={val.status === 'completed'} onChange={(e) => {
-                setTasks([
-                  ...tasks.slice(0,index),
-                  {...val, status: val.status === "active" ? "completed" : "active"},
-                  ...tasks.slice(index+1),
-                ])
-              }}/>
-              <span>{val.name}</span>
-
-              <button className="float-right justify-self-end ml-auto" onClick={() => {
-                setTasks([
-                  ...tasks.slice(0,index),
-                  ...tasks.slice(index+1),
-                ])
-              }}><HighlightOffIcon /></button>
-
-
-            </div>
-          ))}
-          
 
           <div className="mt-8 flex">
               <span className="whitespace-nowrap">{tasks.filter((val) => val.status === 'completed').length} tasks completed</span>
